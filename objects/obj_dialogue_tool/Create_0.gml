@@ -1,3 +1,5 @@
+text = "";
+buffer = undefined;
 overlay_alpha = 0;
 
 horizontal_margin = 28;

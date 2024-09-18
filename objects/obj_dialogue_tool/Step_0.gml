@@ -25,25 +25,52 @@ text = keyboard_string;
 if (keyboard_check_pressed(vk_f2)) {
 	var filename = get_open_filename(".wav files|*.wav", "");
 	
-	if (filename != "" && file_exists(filename)) {
+	if (file_exists(filename)) {
 		var file = buffer_load(filename);
 		var size = buffer_get_size(file);
 		
 		buffer = buffer_create(size, buffer_fixed, 1);
 		buffer_copy(file, 0, size, buffer, 0);
 		buffer_delete(file);
+		buffer_seek(buffer, buffer_seek_start, 12);
 		
-		var sample_rate = buffer_peek(buffer, 24, buffer_u32);
-		var audio_bits = buffer_peek(buffer, 34, buffer_u16);
-		var samples = (size - 44) * 8 div audio_bits;
+		var chunk_size, channels, sample_rate, audio_bits, offset;
+		while (true) {
+			var chunk_name = buffer_read(buffer, buffer_u32);
+			chunk_size = buffer_read(buffer, buffer_u32);
+			
+			// GameMaker doesn't allow loading a fixed-length string, so it's easiest to just check against a
+			// straight hex value.
+			if (chunk_name == 0x20746d66) {  // "fmt" chunk
+				buffer_seek(buffer, buffer_seek_relative, 2);
+				channels = buffer_read(buffer, buffer_u16);
+				sample_rate = buffer_read(buffer, buffer_u32);
+				buffer_seek(buffer, buffer_seek_relative, 6);
+				audio_bits = buffer_read(buffer, buffer_u16);
+			} else if (chunk_name == 0x61746164) {  // "data" chunk
+				offset = buffer_tell(buffer);
+				break;
+			} else {
+				// Irrelevant chunk, skip past it
+				buffer_seek(buffer, buffer_seek_relative, chunk_size);
+			}
+		}
 		
-		blip = audio_create_buffer_sound(buffer, buffer_s16, sample_rate, 44, samples, audio_stereo);
+		buffer_seek(buffer, buffer_seek_start, 0);
+		blip = audio_create_buffer_sound(
+			buffer,
+			buffer_s16,
+			sample_rate,
+			offset,
+			chunk_size * 8 div audio_bits,
+			channels == 2 ? audio_stereo : audio_mono
+		);
 		
 		cutscene_init()
 			.add(new ev_lerp_var(id, "overlay_alpha", 0, 1, 0.1))
 			.add(new ev_dialogue(directions.down, [{
 				face: face ? {sprite: spr_bnuuy, talk_sprite: noone, image: 0} : undefined,
-				blip: obj_dialogue_tool.blip,
+				blip: blip,
 				speaker: noone,
 				text: text
 			}]))
@@ -54,7 +81,5 @@ if (keyboard_check_pressed(vk_f2)) {
 				buffer_delete(obj_dialogue_tool.buffer);
 			}})
 			.start();
-	} else {
-		show_message("Couldn't load .wav file!");
 	}
 }
