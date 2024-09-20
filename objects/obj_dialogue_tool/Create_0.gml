@@ -1,3 +1,6 @@
+window_size = 1;
+window_size_max = min(display_get_width() div 640, display_get_height() div 480);
+
 text = "";
 buffer = undefined;
 overlay_alpha = 0;

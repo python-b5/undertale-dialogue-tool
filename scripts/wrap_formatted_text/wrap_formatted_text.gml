@@ -29,8 +29,8 @@ function wrap_formatted_text(text, line_length, add_asterisks) {
 						if (add_asterisks) {
 							// Skip the delays between these characters so there's not an unnaturally long
 							// pause when using this text in a typewriter.
-							// If this text isn't being used in a typewriter, these tags will do nothing - so no
-							// harm done.
+							// If this text isn't being used in a typewriter, these tags will do nothing - so
+							// no harm done.
 							wrapped_text += "{d,0}  {d," + string(delay) + "}";
 						}
 						
@@ -97,6 +97,19 @@ function wrap_formatted_text(text, line_length, add_asterisks) {
     			current_line_length = 0;
     		} else {
     		    current_line_length++;
+				
+				// If words are longer than a line, they need to be broken up
+				// (same code as higher up in the lookahead routine)
+				var next_char = string_char_at(text, i + 1);
+				if (current_line_length == line_length && next_char != " " && next_char != "\n") {
+					wrapped_text += "\n";
+					
+					if (add_asterisks) {
+						wrapped_text += "{d,0}  {d," + string(delay) + "}";
+					}
+					
+					current_line_length = 0;
+				}
     		}
 		}
 	}

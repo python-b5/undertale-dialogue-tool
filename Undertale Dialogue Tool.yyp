@@ -41,6 +41,7 @@
     {"id":{"name":"draw_box","path":"scripts/draw_box/draw_box.yy",},},
     {"id":{"name":"draw_formatted_text","path":"scripts/draw_formatted_text/draw_formatted_text.yy",},},
     {"id":{"name":"enums","path":"scripts/enums/enums.yy",},},
+    {"id":{"name":"limit_lines","path":"scripts/limit_lines/limit_lines.yy",},},
     {"id":{"name":"typewriter","path":"scripts/typewriter/typewriter.yy",},},
     {"id":{"name":"wrap_formatted_text","path":"scripts/wrap_formatted_text/wrap_formatted_text.yy",},},
     {"id":{"name":"spr_bnuuy","path":"sprites/spr_bnuuy/spr_bnuuy.yy",},},

@@ -1,3 +1,20 @@
+if (keyboard_check(vk_alt)) {
+	var window_size_old = window_size;
+	
+	if (keyboard_check_pressed(vk_up) && !keyboard_check_pressed(vk_down) && window_size < window_size_max) {
+		window_size++;
+	}
+	
+	if (keyboard_check_pressed(vk_down) && !keyboard_check_pressed(vk_up) && window_size > 1) {
+		window_size--;
+	}
+	
+	if (window_size != window_size_old) {
+		window_set_size(window_size * 640, window_size * 480);
+		window_center();
+	}
+}
+
 if (instance_exists(obj_cutscene)) {
 	exit;
 }

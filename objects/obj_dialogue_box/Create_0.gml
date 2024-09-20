@@ -26,7 +26,7 @@ text_y = rect_y + vertical_margin;
 pages_length = array_length(pages);
 current_page = 0;
 
-_typewriter = new typewriter(format_basic, is_undefined(pages[0].face) ? 32 : 25, true, pages[0].blip, true, pages[0].speaker, pages[0].text);
+_typewriter = new typewriter(format_basic, is_undefined(pages[0].face) ? 32 : 25, true, pages[0].blip, true, pages[0].speaker, 3, pages[0].text);
 
 // This is incremented every frame, so to prevent the first talk sprite only appearing for three frames we have to set this to -1.
 face_talk_counter = -1;

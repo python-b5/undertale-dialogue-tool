@@ -1,12 +1,14 @@
 // Creates a new typewriter ("types" characters out one at a time).
-function typewriter(_font, _char_spacing, _line_spacing, line_length, add_asterisks, _blip, _can_skip, _speaker, _text) constructor {
+// (max_lines is an addition specifically to make the Dialogue Tool feel more polished - it's not present in
+// Undertale Wildfire's version of this file.)
+function typewriter(_font, _char_spacing, _line_spacing, line_length, add_asterisks, _blip, _can_skip, _speaker, max_lines, _text) constructor {
 	font = _font;
 	char_spacing = _char_spacing;
 	line_spacing = _line_spacing;
 	blip = _blip;
 	can_skip = _can_skip;
 	speaker = _speaker;
-	text = wrap_formatted_text(_text, line_length, add_asterisks);
+	text = limit_lines(wrap_formatted_text(_text, line_length, add_asterisks), max_lines);
 	
 	text_length = string_length(text);
 	
