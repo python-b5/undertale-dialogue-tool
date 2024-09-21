@@ -1,3 +1,5 @@
+global.time = 0;
+
 window_size = 1;
 window_size_max = min(display_get_width() div 640, display_get_height() div 480);
 

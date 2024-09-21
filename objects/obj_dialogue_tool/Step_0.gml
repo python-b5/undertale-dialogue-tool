@@ -1,3 +1,5 @@
+global.time++;
+
 if (keyboard_check(vk_alt)) {
 	var window_size_old = window_size;
 	
@@ -31,6 +33,10 @@ if (keyboard_check(vk_control)) {
 	if (keyboard_check_pressed(ord("V"))) {
 		keyboard_string = clipboard_get_text();
 	}
+}
+
+if (keyboard_check_pressed(vk_delete)) {
+	keyboard_string = "";
 }
 
 if (keyboard_check_pressed(vk_f1)) {
@@ -98,5 +104,7 @@ if (keyboard_check_pressed(vk_f2)) {
 				buffer_delete(obj_dialogue_tool.buffer);
 			}})
 			.start();
+	} else {
+		keyboard_string = text;
 	}
 }
