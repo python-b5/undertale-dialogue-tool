@@ -102,7 +102,8 @@ function wrap_formatted_text(text, line_length, add_asterisks) {
 				// (same code as higher up in the lookahead routine)
 				var next_char = string_char_at(text, i + 1);
 				if (current_line_length == line_length && next_char != " " && next_char != "\n") {
-					wrapped_text += "\n";
+					// Use {a,e} in case the last character before the break was punctuation
+					wrapped_text += "{a,e}\n";
 					
 					if (add_asterisks) {
 						wrapped_text += "{d,0}  {d," + string(delay) + "}";
