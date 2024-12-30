@@ -55,9 +55,24 @@ if (keyboard_check_pressed(vk_f2)) {
 		buffer = buffer_create(size, buffer_fixed, 1);
 		buffer_copy(file, 0, size, buffer, 0);
 		buffer_delete(file);
-		buffer_seek(buffer, buffer_seek_start, 12);
 		
-		var chunk_size, channels, sample_rate, audio_bits, offset;
+		buffer_seek(buffer, buffer_seek_start, 0);
+		if (buffer_read(buffer, buffer_u32) != 0x46464952) {
+			buffer_delete(buffer);
+			show_message("Invalid .wav file!");
+			keyboard_string = text;
+			exit;
+		}
+		
+		buffer_seek(buffer, buffer_seek_relative, 4);
+		if (buffer_read(buffer, buffer_u32) != 0x45564157) {
+			buffer_delete(buffer);
+			show_message("Invalid .wav file!");
+			keyboard_string = text;
+			exit;
+		}
+		
+		var chunk_size, channels, sample_rate, sample_bits, offset;
 		while (true) {
 			var chunk_name = buffer_read(buffer, buffer_u32);
 			chunk_size = buffer_read(buffer, buffer_u32);
@@ -65,11 +80,22 @@ if (keyboard_check_pressed(vk_f2)) {
 			// GameMaker doesn't allow loading a fixed-length string, so it's easiest to just check against a
 			// straight hex value.
 			if (chunk_name == 0x20746d66) {  // "fmt" chunk
-				buffer_seek(buffer, buffer_seek_relative, 2);
+				var format = buffer_read(buffer, buffer_u16);
 				channels = buffer_read(buffer, buffer_u16);
 				sample_rate = buffer_read(buffer, buffer_u32);
 				buffer_seek(buffer, buffer_seek_relative, 6);
-				audio_bits = buffer_read(buffer, buffer_u16);
+				sample_bits = buffer_read(buffer, buffer_u16);
+				
+				if (format != 1 || sample_bits != 8 && sample_bits != 16) {
+					buffer_delete(buffer);
+					show_message("Only 8-bit or 16-bit PCM audio is supported!");
+					keyboard_string = text;
+					exit;
+				}
+				
+				if (chunk_size > 16) {
+					buffer_seek(buffer, buffer_seek_relative, chunk_size - 16);
+				}
 			} else if (chunk_name == 0x61746164) {  // "data" chunk
 				offset = buffer_tell(buffer);
 				break;
@@ -82,10 +108,10 @@ if (keyboard_check_pressed(vk_f2)) {
 		buffer_seek(buffer, buffer_seek_start, 0);
 		blip = audio_create_buffer_sound(
 			buffer,
-			buffer_s16,
+			sample_bits == 8 ? buffer_u8 : buffer_s16,
 			sample_rate,
 			offset,
-			chunk_size * 8 div audio_bits,
+			chunk_size,
 			channels == 2 ? audio_stereo : audio_mono
 		);
 		
@@ -105,6 +131,7 @@ if (keyboard_check_pressed(vk_f2)) {
 			}})
 			.start();
 	} else {
+		show_message("File does not exist!");
 		keyboard_string = text;
 	}
 }

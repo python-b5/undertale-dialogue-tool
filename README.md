@@ -12,9 +12,7 @@ that are not fully accurate.
 
 Text formatting tags can be used in this tool, using the format used for
 Undertale Wildfire. Documentation can be found
-[here](https://gist.github.com/python-b5/d6f18f25b404325203cc290ddbd6262f). They
-will not appear visually while being typed, due to how the text renderer works,
-but will work correctly after being inserted.
+[here](https://gist.github.com/python-b5/d6f18f25b404325203cc290ddbd6262f).
 
 This tool was originally created to aid Undertale Wildfire's development, but I
 decided to release it publicly as it may be useful for other fangame and mod

@@ -20,6 +20,8 @@ function typewriter(_font, _char_spacing, _line_spacing, line_length, add_asteri
 	
 	auto_pause = true;
 	
+	previous_blip = noone;
+	
 	if (speaker != noone) {
 		global.speaker = speaker;
 	}
@@ -53,7 +55,7 @@ function typewriter(_font, _char_spacing, _line_spacing, line_length, add_asteri
 				// Handle tag
 				var parts = string_split(tag, ",");
 				if (array_length(parts) == 2) {
-					if (string_digits(parts[1]) == parts[1]) {
+					if (string_digits(parts[1]) == parts[1] && parts[1] != "") {
 						var number = real(parts[1]);
 						if (parts[0] == "d") {  // Change delay between characters
 							delay = number;
@@ -95,7 +97,8 @@ function typewriter(_font, _char_spacing, _line_spacing, line_length, add_asteri
 				
 				// Play a voice blip on alphanumeric characters
 				if (string_length(string_lettersdigits(char)) == 1 && blip != noone) {
-					audio_play_sound(blip, 1, false);
+					audio_stop_sound(previous_blip);
+					previous_blip = audio_play_sound(blip, 1, false);
 				}
 				
 				// parse_tags() returns whether we can auto-pause

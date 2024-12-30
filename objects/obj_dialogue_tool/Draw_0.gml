@@ -18,7 +18,7 @@ draw_formatted_text(x_small, pixel_height_small + 261, format_bubble, "Small bub
 draw_set_color(c_gray);
 draw_set_font(fnt_small);
 draw_set_halign(fa_center);
-draw_text(320, 458, "UNDERTALE DIALOGUE TOOL v1.03 (C) PYTHON-B5 2024");
+draw_text(320, 458, "UNDERTALE DIALOGUE TOOL v1.04 (C) PYTHON-B5 2024");
 draw_set_halign(fa_left);
 draw_set_color(c_white);
 

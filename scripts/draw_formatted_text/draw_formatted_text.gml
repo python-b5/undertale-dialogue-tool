@@ -1,6 +1,6 @@
 enum text_effects {
 	swirl,  // Characters move in circles
-	shake   // Characters move around sporadically
+	shake  // Characters move around sporadically
 }
 
 // Draws text with special formatting (effects and colors).
@@ -13,10 +13,13 @@ function draw_formatted_text(_x, _y, font, char_spacing, line_spacing, text) {
 	var current_y = _y;
 	
 	var effect = undefined;
-	var shake_chance = undefined;  // It's maybe not the cleanest to have this separate, but it doesn't really matter
+	var shake_chance = undefined;
 	
 	// Whether to indent new lines
 	var auto_indent = (string_copy(text, 0, 2) == "* ");
+	
+	// Needed to allow you to see tags as you're typing them out. Dialogue tool-exclusive.
+	var ignore_tag = false;
 	
 	var text_length = string_length(text);
 	for (var i = 1; i <= text_length; i++) {
@@ -29,21 +32,27 @@ function draw_formatted_text(_x, _y, font, char_spacing, line_spacing, text) {
 		}
 		
 		// Check if a tag has been reached ("{{" for a literal "{")
-		if (char == "{" && string_char_at(text, i + 1) != "{") {
+		if (char == "{" && string_char_at(text, i + 1) != "{" && !ignore_tag) {
 			var tag = "";
+			var previous_i = i;
 			
 			// Read tag and move past it
 			while (true) {
 				char = string_char_at(text, ++i);
 				
 				if (char == "") {
-					draw_set_color(c_white);
-					return;
+					ignore_tag = true;
+					break;
 				} else if (char == "}") {
 					break;
 				} else {
 					tag += char;
 				}
+			}
+			
+			if (ignore_tag) {
+				i = previous_i - 1;
+				continue;
 			}
 			
 			// Process tag
@@ -109,6 +118,10 @@ function draw_formatted_text(_x, _y, font, char_spacing, line_spacing, text) {
 			}
 			
 			continue;
+		}
+		
+		if (ignore_tag) {
+			ignore_tag = false;
 		}
 		
 		// Handle effects

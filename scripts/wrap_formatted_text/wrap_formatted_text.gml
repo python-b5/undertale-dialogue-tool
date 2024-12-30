@@ -19,6 +19,9 @@ function wrap_formatted_text(text, line_length, add_asterisks) {
 			// (j is allowed to go past text_length so that the final word can still be wrapped)
 			var lookahead_length = 1;
 			
+			// Needed to allow you to see tags as you're typing them out. Dialogue tool-exclusive.
+			var ignore_tag = false;
+			
 			for (var j = i + 1; j <= text_length + 1; j++) {
 				var lookahead_char = string_char_at(text, j);
 				
@@ -43,18 +46,28 @@ function wrap_formatted_text(text, line_length, add_asterisks) {
 					}
 					
 					break;
-				} else if (lookahead_char == "{") {
+				} else if (lookahead_char == "{" && !ignore_tag) {
 					if (string_char_at(text, j + 1) == "{") {
 						// Handle escaped "{"s
 						lookahead_length++;
 						j++;
 					} else {
 						// Skip past tag
+						var previous_j = j;
 						while (string_char_at(text, ++j) != "}" && j <= text_length) {};
-						j--;
+						
+						if (j > text_length) {
+							j = previous_j - 1;
+							ignore_tag = true;
+							continue;
+						}
 					}
 				} else {
 					lookahead_length++;
+				}
+				
+				if (ignore_tag) {
+					ignore_tag = false;
 				}
 			}
 		} else if (char == "{") {
